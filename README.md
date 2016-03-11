@@ -1,3 +1,2 @@
-# rbw
-### react, babel, webpack
-
+# rrbw
+### react, redux, babel, webpack

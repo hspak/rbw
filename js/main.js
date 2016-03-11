@@ -1,48 +1,34 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import {Router, Route, IndexRoute, Link, browserHistory} from 'react-router';
+import {render} from 'react-dom';
+import {Router, Route, IndexRoute, browserHistory} from 'react-router';
+import {createStore, combineReducers} from 'redux';
+import {Provider} from 'react-redux';
+import {syncHistoryWithStore, routerReducer} from 'react-router-redux';
 
-class App extends React.Component {
-  render() {
-    return (
-      <div>
-        <h1>This is the app container.</h1>
-        {this.props.children}
-      </div>);
-  }
-}
+import * as reducers from './reducers'
+import {App, Home, About, ReduxDemo} from './components'
 
-class Index extends React.Component {
-  render() {
-    return (
-      <div>
-        <p>This is the homepage.</p>
-        <Link to="/about">Go to About</Link>
-      </div>
-    );
-  }
-}
+const reducer = combineReducers({
+  ...reducers,
+  routing: routerReducer
+})
 
-class About extends React.Component {
-  render() {
-    return (
-      <div>
-        <p>About Page</p>
-        <Link to="/">Go Back Home</Link>
-      </div>);
-  }
-}
+const store = createStore(reducer);
+const history = syncHistoryWithStore(browserHistory, store);
 
 const routes = (
-  <Router history={browserHistory}>
-    <Route path="/" component={App}>
-      <IndexRoute component={Index} />
+  <Router history={history}>
+    <Route path='/' component={App}>
+      <IndexRoute component={Home} />
       <Route path="about" component={About} />
+      <Route path="redux" component={ReduxDemo} />
     </Route>
   </Router>
 );
 
-ReactDOM.render(
-  routes,
-  document.getElementById("body")
+render(
+  <Provider store={store}>
+    {routes}
+  </Provider>,
+  document.getElementById('mount')
 );
